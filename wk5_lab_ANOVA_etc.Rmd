@@ -1,0 +1,57 @@
+---
+title: 'Week 5 Code-Along: Penguin Size'
+author: "Kerry Nixon"
+date: "11/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE, echo= TRUE, message= FALSE, warning= FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(palmerpenguins)
+library(effsize)
+library(broom)
+library(ggbeeswarm)
+library(car)
+```
+
+# Part 1. T-tests
+Using t-tests to compare means between groups to see if we have enough evidence to think we drew samples from populations from different means (rejecting the null hypothesis that they were drawn from the same population aka same means and observed differences are sampling variation by chance).
+
+Mass comparision: male & females chinstrap penguins
+
+```{r}
+chinstraps <- penguins %>% 
+  filter(species == "Chinstrap")
+
+# Exploratory Histograms
+ggplot(data = chinstraps, aes(x = body_mass_g)) +
+  geom_histogram(bins = 10) +
+  facet_wrap(~sex)
+
+```
+
+Both graphs look somewhat normally distributed, fairly symmetric though not perfect. The roughly normal distribution makes using the mean central tendency a reasonable value for comparison. The male mean appears as though it will be a bit higher than the female mean, with male measure of central tendency closer to 4000g for male and 3500g for female. 
+
+```{r}
+# Exploratory QQ-plots to check for normality (more linear = more normal distribution)
+
+ggplot(data = chinstraps, aes(sample = body_mass_g)) +
+  geom_qq() +
+  facet_wrap(~sex)
+
+```
+Both of these look very close to normal distributions as they are quite linear in appearance. Between these plots and the histograms we can feel confident in the normal distribution of our data/samples. 
+
+```{r}
+## Get descriptive statistics
+chinstraps %>% 
+  group_by(sex) %>% 
+  summarise(
+    mean_mass = mean(body_mass_g),
+    median_mass = median(body_mass_g),
+    sd_mass = sd(body_mass_g),
+    sample_size = n())
+
+```
+
