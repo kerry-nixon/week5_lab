@@ -55,7 +55,7 @@ chinstraps %>%
 
 ```
 
-##### Get vectors of body_mass_g for femail and male chinstrap penguins separately.
+##### Get vectors of body_mass_g for femail and male chinstrap penguins separately for use in t-test.
 
 ```{r}
 
@@ -94,6 +94,8 @@ chinstrap_ttest
 cohen.d(chinstraps_f, chinstraps_m)
 ```
 
+### Using broom::tidy for reproducable writing of results.
+
 There is a significant difference in body mass, and a large effect size (Cohen's *d* = -1.26). The way I'm *writing this* is not reproducible. How can we use in-line referencing of outcomes so that the values would automatically update if the values did? 
 
 Use `broom::tidy()` to get messy model outputs into tidy data frames that are easy to reference! 
@@ -111,4 +113,15 @@ female chinstrap mean = `r round(chinstrap_out$estimate1)`g
 
 male chinstrap mean = `r round(chinstrap_out$estimate2)`g
 
+##### One-sided t-test
+
+Are male chinstrap penguins significantly larger (body mass) than female chinstrap penguins?
+
+```{r}
+# Updating the alternative hypothesis to see whether the mean of first variable - chinstraps_m (males) are greater than second variable, chinstraps_f (female)
+
+t.test(chinstraps_m, chinstraps_f, alternative = "greater") 
+
+# Because this is only looking at one side of the difference (greater than rather than different from which includes both greater than and less than), the upper tail only, it will have half of the p-value as the two-sided t-test
+```
 
