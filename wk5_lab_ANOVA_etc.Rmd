@@ -55,3 +55,60 @@ chinstraps %>%
 
 ```
 
+##### Get vectors of body_mass_g for femail and male chinstrap penguins separately.
+
+```{r}
+
+chinstraps_f <- chinstraps %>% 
+  filter(sex == "female") %>% 
+  pull(body_mass_g)
+
+chinstraps_m <- chinstraps %>% 
+  filter(sex == "male") %>% 
+  pull(body_mass_g)
+```
+
+### T-tests, a couple of different ways
+
+1. Is there a significant difference in body mass between male and female chinstrap penguins?
+
+```{r}
+chinstrap_ttest <- t.test(chinstraps_f, chinstraps_m)
+chinstrap_ttest
+```
+## Welch Two Sample t-test results
+
+1. Not using the assummption of equal variances
+2. Lowest line shows the means are given for both samples in the order they were input - should match your summary stats.
+3. Alternative hypothesis is given, and you can deduce the null from that - in this case teh null is that the means are the same (the difference is equal to 0) and the alternative is that the difference in means in not equal to 0 (aka the samples are drawn from populations with different means)
+4. The "t" value is a measure of how different from 0 the means are from 0 on the t distribution when taking into account sample size and dispersion
+5. The "df" is the "degree of freedom" measuring sample size
+6. The "p" is "p-value" which measures the probability that we took samples from teh same population (populations with the same mean) with means at least as different as the means we've found in our samples, by random chance.
+7. CONTEXT: To add context to the results talk about the:
+  . actual difference
+  . percent difference
+  . effect size (Cohen's D)
+
+```{r}
+# Effect Size
+cohen.d(chinstraps_f, chinstraps_m)
+```
+
+There is a significant difference in body mass, and a large effect size (Cohen's *d* = -1.26). The way I'm *writing this* is not reproducible. How can we use in-line referencing of outcomes so that the values would automatically update if the values did? 
+
+Use `broom::tidy()` to get messy model outputs into tidy data frames that are easy to reference! 
+
+```{r}
+chinstrap_out <- broom::tidy(chinstrap_ttest)
+chinstrap_out
+```
+
+You can **reference values from model outputs in your R markdown text**:
+
+t(`r round(chinstrap_out$parameter,2)`) = `r round(chinstrap_out$statistic,2)`, *p* = `r chinstrap_out$p.value`.
+
+female chinstrap mean = `r round(chinstrap_out$estimate1)`g
+
+male chinstrap mean = `r round(chinstrap_out$estimate2)`g
+
+
